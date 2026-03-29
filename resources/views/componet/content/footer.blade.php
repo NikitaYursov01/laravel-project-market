@@ -92,7 +92,7 @@
           <p class="text-sm text-gray-600">© DETAIL-DEAL.RU, <?php echo date('Y'); ?></p>
           <p class="text-xs text-gray-500">ООО «DETAIL-DEAL.RU» осуществляет деятельность в области информационных
             технологий. Вид деятельности (код): 2.01. На информационном ресурсе применяются рекомендательные
-            технологии. <a href="#" class="text-blue-600 hover:text-blue-700 transition-colors">Политика
+            технологии. <a href="{{ route('term.politic') }}" class="text-blue-600 hover:text-blue-700 transition-colors">Политика
               конфиденциальности</a>.</p>
         </div>
       </div>
