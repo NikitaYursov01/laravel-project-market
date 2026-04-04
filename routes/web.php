@@ -9,6 +9,10 @@ Route::get('/', function () {
   return view('home');
 })->name('main');
 
+  //политика и соглашение
+  Route::view('/term/politic', 'term.politic')->name('term.politic');
+  Route::view('/term/access', 'term.access')->name('term.access');
+
 // маршруты авторизации (prefix - это заранее написанный первый путь /auth/... а дальше группа запросов)
 Route::prefix('auth')->group(function () {
 

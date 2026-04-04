@@ -68,8 +68,8 @@
           </div>
           <p class="text-white text-xs sm:text-sm mt-3 sm:mt-4">
             Продолжая, вы принимаете
-            <a href="#" class="underline hover:text-white">соглашение</a> и
-            <a href="#" class="underline hover:text-white">политику конфиденциальности</a>
+            <a href="{{ route('term.access') }}" class="underline hover:text-white">соглашение</a> и
+            <a href="{{ route('term.politic') }}" class="underline hover:text-white">политику конфиденциальности</a>
           </p>
         </div>
 
