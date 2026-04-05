@@ -40,3 +40,4 @@ Route::prefix('auth')->group(function () {
   //обновления данных в профиле
   Route::post('/profile/update', [Profile::class, 'UpdateProfile'])->name('profile.update');
 });
+  Route::view('/performer_create_listing', 'performer_create_listing')->name('performer_create_listing');
