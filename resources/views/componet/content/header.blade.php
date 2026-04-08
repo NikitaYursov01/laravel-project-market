@@ -106,19 +106,82 @@
   </div>
 
   <!-- Mobile version -->
-  <div class="flex justify-between items-center" id="mobile">
+<!-- Mobile version -->
+<div class="justify-between items-center gap-2 px-1" id="mobile">
 
-    <!-- contetn 1 -->
-    <div class="flex items-center gap-">
-
+  <!-- left -->
+  <a href="{{ route('main') }}" class="flex items-center gap-2">
+    <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center p-2 shadow-sm">
+      <img src="/src/logo/logo.svg" alt="Logo" loading="lazy" class="w-full h-full object-contain">
     </div>
+  </a>
 
-    <!-- contetn 2 -->
-    <div class="relative flex items-center gap-">
+  <!-- right -->
+  <div class="relative flex items-center gap-2">
 
+    <a href="{{ route('search') }}"
+      class="w-10 h-10 rounded-xl border border-gray-200 bg-white/70 flex items-center justify-center text-black shadow-sm">
+      <i class="fa fa-search"></i>
+    </a>
+
+    <div class="relative" data-menu="mobileburger">
+      <button type="button"
+        class="menu-trigger w-10 h-10 rounded-xl border border-gray-200 bg-white/70 flex items-center justify-center text-black shadow-sm">
+        <i class="fa fa-bars text-[22px] transition-transform duration-300"></i>
+      </button>
+
+      <nav>
+        <ul
+          class="absolute right-0 top-[calc(100%+10px)] w-[min(320px,calc(100vw-16px))] bg-white/95 backdrop-blur rounded-3xl p-3 flex flex-col gap-2 opacity-0 menu-dropdown shadow-[0_16px_40px_rgba(0,0,0,0.12)] border border-white/70 z-[60]">
+
+          <li class="px-2 pt-1 pb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-400">
+            Меню
+          </li>
+
+          <li><a href="{{ route('main') }}" class="mobile-menu-link">Главная</a></li>
+          <li><a href="{{ route('orders.create') }}" class="mobile-menu-link">Заказать</a></li>
+          <li><a href="{{ route('search') }}" class="mobile-menu-link">Начать поиск</a></li>
+          <li><a href="{{ route('performers.index') }}" class="mobile-menu-link">Исполнители</a></li>
+          <li><a href="#" class="mobile-menu-link">Помощь</a></li>
+
+          @auth
+            <li class="border-t border-gray-100 mt-1 pt-2">
+              <span class="px-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-400">
+                Профиль
+              </span>
+            </li>
+
+            <li><a href="{{ route('profile') }}" class="mobile-menu-link">Профиль</a></li>
+            <li><a href="{{ route('messages.index') }}" class="mobile-menu-link">Сообщения</a></li>
+            <li><a href="{{ route('orders.my') }}" class="mobile-menu-link">Мои заказы</a></li>
+            <li><a href="{{ route('orders.feed') }}" class="mobile-menu-link">Лента заказов</a></li>
+            <li><a href="{{ route('service.create') }}" class="mobile-menu-link">Выставить услугу</a></li>
+
+            <li class="mt-1 pt-2 border-t border-gray-100">
+              <button type="button"
+                class="mobile-menu-link mobile-menu-link--danger w-full text-left flex justify-between items-center"
+                onclick="document.getElementById('logout-form').submit();">
+                Выйти
+                <i class="fa fa-door-open text-red-400"></i>
+              </button>
+            </li>
+          @else
+            <li class="border-t border-gray-100 mt-1 pt-2">
+              <span class="px-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-400">
+                Аккаунт
+              </span>
+            </li>
+
+            <li><a href="{{ route('login.form') }}" class="mobile-menu-link">Войти</a></li>
+            <li><a href="{{ route('register.form') }}" class="mobile-menu-link">Регистрация</a></li>
+          @endauth
+
+        </ul>
+      </nav>
     </div>
 
   </div>
+</div>
 </div>
 
 <script>

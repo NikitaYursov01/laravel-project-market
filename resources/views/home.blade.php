@@ -240,8 +240,5 @@
 
     </div>
   </section>
-
-  <!-- footer -->
-  @include('componet.content.footer')
-
+  
 @endsection
