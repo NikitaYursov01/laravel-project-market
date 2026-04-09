@@ -99,10 +99,10 @@ Route::get('/search', function () {
 })->name('search');
 
 // Условия использования и политика конфиденциальности
-Route::get('/terms/access', function () {
-  return view('terms.access');
+Route::get('/term/access', function () {
+  return view('term.access');
 })->name('term.access');
 
-Route::get('/terms/politic', function () {
-  return view('terms.politic');
+Route::get('/term/politic', function () {
+  return view('term.politic');
 })->name('term.politic');

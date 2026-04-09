@@ -17,7 +17,7 @@
 
         <!-- Logo -->
         <div class="flex justify-center mb-8">
-          <div class="w-20 h-20 bg-blue-600 rounded-full flex justify-center items-center p-4">
+          <div class="w-16 h-16 sm:w-20 sm:h-20 bg-blue-600 rounded-full flex justify-center items-center p-3 sm:p-4">
             <span class="bg-[url('/src/logo/logo.svg')] bg-no-repeat w-full h-full bg-contain"></span>
           </div>
         </div>
@@ -26,7 +26,7 @@
         <div class="bg-white">
 
           <!-- Title -->
-          <h1 class="text-2xl font-semibold text-center text-gray-900 mb-3">
+          <h1 class="text-xl sm:text-2xl font-semibold text-center text-gray-900 mb-3 leading-snug">
             Войдите, чтобы работать<br>с заказами
           </h1>
 
@@ -41,16 +41,16 @@
               <!-- email -->
               <input id="email" name="email" type="email" placeholder="Электронная почта"
                 value="{{ old('email') ?? session('email') }}"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none transition-colors ">
+                class="w-full px-4 py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none transition-colors ">
               <span id="errorEmail" class="text-red-500 text-sm mt-2 hidden"></span>
               <button id="next_btn"
-                class="hover:scale-95 transition-all duration-500 mt-4 w-full bg-[#0070ff] hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg"
+                class="hover:scale-95 transition-all duration-500 mt-4 w-full bg-[#0070ff] hover:bg-blue-700 text-white font-medium py-3 px-4 text-sm sm:text-base rounded-lg"
                 disabled>
                 Продолжить
               </button>
 
               <button onclick="next_password(); event.preventDefault();"
-                class="hover:scale-95 transition-all duration-500 mt-4 w-full bg-[#edf6ff] text-[#0070ff] font-medium py-3 px-4 rounded-lg">
+                class="hover:scale-95 transition-all duration-500 mt-4 w-full bg-[#edf6ff] text-[#0070ff] font-medium py-3 px-4 text-sm sm:text-base rounded-lg">
                 Войти по паролю
               </button>
 
@@ -62,13 +62,13 @@
               <!-- ВВОД КОДА -->
               <div class="relative">
                 <input id="verifycode" name="verifycode" type="text" placeholder="****"
-                  class="tracking-[5px] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none transition-colors text-center text-lg font-mono"
+                  class="tracking-[5px] w-full px-4 py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none transition-colors text-center text-lg font-mono"
                   maxlength="4">
                 <span id="errorVerifyCode" class="text-red-500 text-sm mt-2 block hidden"></span>
               </div>
 
               <button type="submit" id="login_btn"
-                class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+                class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 text-sm sm:text-base rounded-lg transition-colors"
                 disabled>
                 Войти
               </button>
@@ -93,30 +93,30 @@
 
             <!-- email -->
             <input id="check_email" name="email" type="email" placeholder="Электронная почта" value="{{ old('email') }}"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ">
+              class="w-full px-4 py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ">
 
             <!-- password -->
             <input id="password" name="password" type="password" placeholder="Введите свой пароль"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ">
+              class="w-full px-4 py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ">
 
             <button type="submit" id="password_submit_btn"
-              class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center">
+              class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 text-sm sm:text-base rounded-lg transition-colors flex items-center justify-center">
               <span id="btn_text">Войти</span>
             </button>
 
             <button type="button" onclick="back_to_code(); event.preventDefault();"
-              class="hover:scale-95 transition-all duration-500 mt-4 w-full bg-[#edf6ff] text-[#0070ff] font-medium py-3 px-4 rounded-lg">
+              class="hover:scale-95 transition-all duration-500 mt-4 w-full bg-[#edf6ff] text-[#0070ff] font-medium py-3 px-4 text-sm sm:text-base rounded-lg">
               Войти по почте
             </button>
           </form>
 
           <button onclick="location.href = '{{ route('main') }}'"
-            class="hover:scale-95 transition-all duration-500 mt-4 w-full border border-dashed border-blue-600 text-blue-600 font-medium py-3 px-4 rounded-lg">
+            class="hover:scale-95 transition-all duration-500 mt-4 w-full border border-dashed border-blue-600 text-blue-600 font-medium py-3 px-4 text-sm sm:text-base rounded-lg">
             <i class="fas fa-angle-left text-lg text-blue-600"></i> На главную
           </button>
 
           <!-- Links -->
-          <div class="absolute top-5 left-5 mt-6">
+          <div class="static mt-5 mb-2 sm:absolute sm:top-5 sm:left-5 sm:mt-6">
             <a href="{{ route('register.form') }}"
               class="text-blue-600 hover:text-blue-700 text-md font-medium items-center flex gap-1">
               <i class="fas fa-angle-left text-lg text-blue-600"></i>

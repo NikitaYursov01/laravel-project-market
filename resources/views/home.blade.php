@@ -25,7 +25,7 @@
           </div>
 
           <!-- logo_name -->
-          <a href="#"
+          <a href="{{ route('main') }}"
             class="text-white text-base sm:text-lg border-b border-dashed border-white hover:border-blue-500 hover:text-blue-500 transition-colors">
             Detail-Deal
           </a>
@@ -52,7 +52,7 @@
       <!-- Main Content -->
       <div class="max-w-2xl">
         <h3 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-6 sm:mb-8 leading-tight">
-          Начните <font class="text-blue-400">быстрый</font> поиск <font class="text-blue-400">нужной детали</font> прямо
+          Начните <span class="text-blue-400">быстрый</span> поиск <font class="text-blue-400">нужной детали</font> прямо
           сейчас!
         </h3>
 
@@ -87,7 +87,7 @@
   <section class="relative my-16">
     <div class="structure px-4 sm:px-0">
 
-      <h3 class="title-h3 text-center">Поможем подобрать подходящего исполнителья</h3>
+      <h3 class="title-h3 text-center">Поможем подобрать подходящего исполнителя</h3>
 
       <!-- сетка блоков -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
@@ -152,9 +152,9 @@
   <section class="relative my-16">
     <div class="structure px-4 sm:px-0">
 
-      <h3 class="title-h3 text-center">Удобный интерфейс для исполниеля и заказчика</h3>
+      <h3 class="title-h3 text-center">Удобный интерфейс для исполнителя и заказчика</h3>
 
-      <div class="flex justify-center items-center gap-10 flex-wrap lg:flex-nowrap">
+      <div class="flex justify-center items-stretch gap-4 sm:gap-6 lg:gap-10 flex-wrap lg:flex-nowrap">
 
         <!-- block 1 -->
         <div
@@ -195,7 +195,7 @@
 
       <h3 class="title-h3 text-center">Начни поиск сейчас — <br>в раз-два-три</h3>
 
-      <div class="flex justify-center items-stretch gap-10 flex-wrap lg:flex-nowrap">
+      <div class="flex justify-center items-stretch gap-4 sm:gap-6 lg:gap-8 flex-wrap lg:flex-nowrap">
 
         <!-- block 1 -->
         <div
@@ -215,7 +215,7 @@
           class="flex flex-col justify-between p-4 sm:p-6 lg:p-8 text-sm sm:text-base lg:text-base leading-5 sm:leading-6 lg:leading-6 text-gray-700 bg-white rounded-xl sm:rounded-2xl lg:lg:w-[calc(50%-12px)]">
           <span class="bg-green-400 text-white px-2 py-1 rounded-lg w-fit">Шаг 2</span>
           <h4 class="title-h4 mt-4 mb-0 font-bold">Найдите товар</h4>
-          <p class="description mb-4 text-gray-600">Отышите нужным вам товар</p>
+          <p class="description mb-4 text-gray-600">Отыщите нужный вам товар</p>
           <picture>
             <source class="rounded-xl" srcset="/src/background/main_services/part2.jpg" type="image/webp"
               media="(max-width: 630px)">
@@ -240,8 +240,5 @@
 
     </div>
   </section>
-
-  <!-- footer -->
-  @include('componet.content.footer')
 
 @endsection

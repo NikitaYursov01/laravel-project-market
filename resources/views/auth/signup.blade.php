@@ -11,13 +11,13 @@
   <div
     class="flex flex-col justify-center items-center w-full h-screen bg-[url('/src/background/auth/background/bg.avif')] bg-center bg-fit">
 
-    <section
-      class="relative flex flex-col items-center justify-center border border-blue-600 border-dashed py-8 px-10 rounded-3xl bg-white">
-      <div class="w-full max-w-md">
+<section
+    class="relative w-full max-w-md flex flex-col items-center justify-center border border-blue-600 border-dashed py-6 sm:py-8 px-4 sm:px-10 rounded-3xl bg-white">
+      <div class="w-full">
 
         <!-- Logo -->
         <div class="flex justify-center mb-8">
-          <div class="w-20 h-20 bg-blue-600 rounded-full flex justify-center items-center p-4">
+          <div class="w-16 h-16 sm:w-20 sm:h-20 bg-blue-600 rounded-full flex justify-center items-center p-3 sm:p-4">
             <span class="bg-[url('/src/logo/logo.svg')] bg-no-repeat w-full h-full bg-contain"></span>
           </div>
         </div>
@@ -25,11 +25,11 @@
         <!-- Card -->
         <div class="bg-white">
           <!-- Title -->
-          <h1 class="text-2xl font-semibold text-center text-gray-900 mb-3">
+          <h1 class="text-xl sm:text-2xl font-semibold text-center text-gray-900 mb-3 leading-snug">
             Регистрация для поиска исполнителя
           </h1>
 
-          <p class="text-center text-gray-500 mb-8">
+          <p class="text-sm sm:text-base text-center text-gray-500 mb-6 sm:mb-8">
             Введите данные для регистрации<br>в личном кабинете
           </p>
 
@@ -44,7 +44,7 @@
               <div class="relative">
                 <input id="email" type="email" placeholder="Электронная почта"
                   value="{{ old('email') ?? session('email') }}"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none transition-colors ">
+                  class="w-full px-4 py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none transition-colors ">
                 <span id="errorEmail" class="text-red-500 text-sm mt-2 block hidden"></span>
               </div>
               @error('email')
@@ -52,7 +52,7 @@
               @enderror
 
               <button id="next_btn" onclick="next(); event.preventDefault();"
-                class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+                class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 text-sm sm:text-base rounded-lg transition-colors"
                 disabled>
                 Продолжить
               </button>
@@ -62,7 +62,7 @@
             <div class="flex flex-col space-y-4 hidden transition-all duration-500" id="end">
               <div class="relative">
                 <input id="name" name="name" type="text" placeholder="Как вас называть?" value="{{ old('name') }}"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none transition-colors @error('name') border-red-500 @enderror">
+                  class="w-full px-4 py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none transition-colors @error('name') border-red-500 @enderror">
                 <span id="errorName" class="text-red-500 text-sm mt-2 block hidden"></span>
               </div>
               @error('name')
@@ -71,7 +71,7 @@
 
               <div class="relative">
                 <input id="password" name="password" type="password" placeholder="Придумайте пароль"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none transition-colors @error('password') border-red-500 @enderror">
+                  class="w-full px-4 py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none transition-colors @error('password') border-red-500 @enderror">
                 <span id="errorPassword" class="text-red-500 text-sm mt-2 block hidden"></span>
               </div>
               @error('password')
@@ -81,7 +81,7 @@
               <div class="relative">
                 <input id="password_confirmation" name="password_confirmation" type="password"
                   placeholder="Подтвердите пароль"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none transition-colors @error('password_confirmation') border-red-500 @enderror">
+                  class="w-full px-4 py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none transition-colors @error('password_confirmation') border-red-500 @enderror">
                 <span id="errorPasswordConfirmation" class="text-red-500 text-sm mt-2 block hidden"></span>
               </div>
               @error('password_confirmation')
@@ -89,7 +89,7 @@
               @enderror
 
               <button type="button" id="confirm_btn"
-                class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+                class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 text-sm sm:text-base rounded-lg transition-colors"
                 disabled>
                 Подтвердить почту
               </button>
@@ -99,7 +99,7 @@
             <div class="flex flex-col space-y-4 hidden transition-all duration-500" id="confirm">
               <div class="relative">
                 <input id="verifycode" name="verifycode" type="text" placeholder="****" maxlength="4"
-                  class="tracking-[5px] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none transition-colors text-center text-lg font-mono @error('verifycode') border-red-500 @enderror">
+                  class="tracking-[5px] w-full px-4 py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none transition-colors text-center text-lg font-mono @error('verifycode') border-red-500 @enderror">
                 <span id="errorVerifyCode" class="text-red-500 text-sm mt-2 block hidden"></span>
               </div>
               @error('verifycode')
@@ -107,7 +107,7 @@
               @enderror
 
               <button type="submit" id="register_btn"
-                class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors">
+                class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 text-sm sm:text-base rounded-lg transition-colors">
                 Зарегистрироваться
               </button>
             </div>
@@ -115,7 +115,7 @@
           </form>
 
           <button onclick="location.href = '{{ route('main') }}'"
-            class="hover:scale-95 transition-all duration-500 mt-4 w-full border border-dashed border-blue-600 text-blue-600 font-medium py-3 px-4 rounded-lg">
+            class="hover:scale-95 transition-all duration-500 mt-4 w-full border border-dashed border-blue-600 text-blue-600 font-medium py-3 px-4 text-sm sm:text-base rounded-lg">
             <i class="fas fa-angle-left text-lg text-blue-600"></i> На главную
           </button>
 
@@ -144,6 +144,7 @@
         © <?php echo date('Y'); ?> ООО «DetailDeal»
       </p>
   </div>
+</section>
 
   <script>
     const email = document.getElementById('email');

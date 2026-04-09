@@ -66,9 +66,16 @@
                 <div>
                     <h4 class="font-semibold mb-4">Подписка</h4>
                     <p class="text-sm text-gray-300 mb-4">Получайте новости и обновления</p>
-                    <form class="flex">
-                        <input type="email" placeholder="Email" class="bg-gray-700 text-white px-3 py-2 rounded-l-lg flex-1 outline-none focus:bg-gray-600">
-                        <button type="submit" class="bg-blue-600 px-4 py-2 rounded-r-lg hover:bg-blue-700 transition-colors">
+                    <form class="flex flex-col sm:flex-row gap-2 sm:gap-0">
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            class="min-w-0 w-full bg-gray-700 text-white px-3 py-2 rounded-lg sm:rounded-l-lg sm:rounded-r-none outline-none focus:bg-gray-600"
+                        >
+                        <button
+                            type="submit"
+                            class="w-full sm:w-auto bg-blue-600 px-4 py-2 rounded-lg sm:rounded-r-lg sm:rounded-l-none hover:bg-blue-700 transition-colors"
+                        >
                             →
                         </button>
                     </form>
