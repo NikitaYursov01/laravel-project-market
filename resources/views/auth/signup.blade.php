@@ -69,6 +69,32 @@
                 <span class="text-red-500 text-sm mt-2 block">{{ $message }}</span>
               @enderror
 
+              <!-- Выбор роли -->
+              <div class="relative">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Кем вы хотите быть?</label>
+                <div class="grid grid-cols-2 gap-3">
+                  <label class="cursor-pointer">
+                    <input type="radio" name="role" value="client" class="peer hidden" {{ old('role', 'client') == 'client' ? 'checked' : '' }}>
+                    <div class="px-4 py-3 border-2 border-gray-300 rounded-lg peer-checked:border-blue-600 peer-checked:bg-blue-50 transition-all text-center">
+                      <i class="fa fa-briefcase text-blue-600 mb-1"></i>
+                      <div class="font-medium text-sm">Заказчик</div>
+                      <div class="text-xs text-gray-500">Ищу исполнителей</div>
+                    </div>
+                  </label>
+                  <label class="cursor-pointer">
+                    <input type="radio" name="role" value="performer" class="peer hidden" {{ old('role') == 'performer' ? 'checked' : '' }}>
+                    <div class="px-4 py-3 border-2 border-gray-300 rounded-lg peer-checked:border-green-600 peer-checked:bg-green-50 transition-all text-center">
+                      <i class="fa fa-hammer text-green-600 mb-1"></i>
+                      <div class="font-medium text-sm">Исполнитель</div>
+                      <div class="text-xs text-gray-500">Ищу заказы</div>
+                    </div>
+                  </label>
+                </div>
+                @error('role')
+                  <span class="text-red-500 text-sm mt-2 block">{{ $message }}</span>
+                @enderror
+              </div>
+
               <div class="relative">
                 <input id="password" name="password" type="password" placeholder="Придумайте пароль"
                   class="w-full px-4 py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none transition-colors @error('password') border-red-500 @enderror">

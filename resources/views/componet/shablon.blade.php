@@ -22,7 +22,6 @@
 
 <body>
 
-  @include('componet/content.header')
   <!-- here content -->
   @yield('content')
 
