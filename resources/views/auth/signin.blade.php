@@ -12,8 +12,8 @@
     class="flex flex-col justify-center items-center w-full h-screen bg-[url('/src/background/auth/background/bg.avif')] bg-center bg-fit">
 
     <section
-      class="relative flex flex-col items-center justify-center border border-blue-600 border-dashed py-8 px-10 rounded-3xl bg-white">
-      <div class="w-full max-w-md">
+      class="relative flex flex-col items-center justify-center border border-blue-600 border-dashed py-6 md:py-8 px-4 md:px-10 rounded-2xl md:rounded-3xl bg-white w-full max-w-lg mx-4">
+      <div class="w-full max-w-md px-2 md:px-0">
 
         <!-- Logo -->
         <div class="flex justify-center mb-8">

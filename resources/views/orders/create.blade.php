@@ -9,9 +9,9 @@
 
     @include('componet/content.header')
 
-    <div class="max-w-4xl mx-auto px-4 py-8">
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">Разместить новое объявление/услугу/заказ</h2>
+    <div class="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
+        <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Разместить новое объявление/услугу/заказ</h2>
 
             @if(session('success'))
                 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">

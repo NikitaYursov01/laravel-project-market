@@ -12,23 +12,23 @@
             <div class="min-h-screen">
 
                 <!-- structure - содережание по контейнеру  -->
-                <div class="flex justify-between items-start structure px-4 sm:px-0 py-[40px] gap-10">
+                <div class="flex flex-col lg:flex-row justify-between items-start structure px-4 sm:px-0 py-[20px] lg:py-[40px] gap-6 lg:gap-10">
 
-                    <aside class="flex w-full justify-start items-start max-w-[400px] flex-col">
+                    <aside class="flex w-full lg:max-w-[300px] xl:max-w-[400px] flex-col">
 
                         <h4 class="title-h4">Мой профиль</h4>
                         <nav class="w-full">
-                            <ul class="flex flex-col gap-1 justify-start items-center">
+                            <ul class="flex flex-row lg:flex-col gap-2 lg:gap-1 justify-start lg:items-start overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
                                 <li data-toggle-section="main"
-                                    class="block font-semibold font-sans cursor-pointer w-full p-3.5 profile_li profile_active hover:bg-blue-400/10 transition">
+                                    class="block font-semibold font-sans cursor-pointer whitespace-nowrap w-auto lg:w-full px-4 lg:p-3.5 py-2 rounded-lg lg:rounded-none profile_li profile_active hover:bg-blue-400/10 transition">
                                     Мой профиль
                                 </li>
                                 <li data-toggle-section="data"
-                                    class="block font-semibold font-sans cursor-pointer w-full p-3.5 profile_li hover:bg-blue-400/10 transition">
+                                    class="block font-semibold font-sans cursor-pointer whitespace-nowrap w-auto lg:w-full px-4 lg:p-3.5 py-2 rounded-lg lg:rounded-none profile_li hover:bg-blue-400/10 transition">
                                     Личные данные
                                 </li>
                                 <li data-toggle-section="orders"
-                                    class="block font-semibold font-sans cursor-pointer w-full p-3.5 profile_li hover:bg-blue-400/10 transition">
+                                    class="block font-semibold font-sans cursor-pointer whitespace-nowrap w-auto lg:w-full px-4 lg:p-3.5 py-2 rounded-lg lg:rounded-none profile_li hover:bg-blue-400/10 transition">
                                     Мои объявления <span
                                         class="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full ml-2">{{ $userOrders->count() }}</span>
                                 </li>
@@ -37,7 +37,7 @@
 
                     </aside>
 
-                    <section class="flex-1 flex flex-col gap-2">
+                    <section class="w-full lg:flex-1 flex flex-col gap-2">
 
                         <!-- block 1 -->
                         <div data-section="main" class="bg-white rounded-xl mb-6"

@@ -8,7 +8,7 @@
         $otherUser = $chat->getOtherParticipant($user->id);
     @endphp
 
-    <div class="max-w-4xl mx-auto px-4 py-6">
+    <div class="max-w-4xl mx-auto px-2 sm:px-4 py-4 sm:py-6 h-[calc(100vh-80px)] sm:h-auto flex flex-col sm:block">
         <!-- Header -->
         <div class="bg-white rounded-t-xl shadow-sm border border-gray-200 p-4">
             <div class="flex items-center justify-between">
@@ -32,7 +32,7 @@
         </div>
 
         <!-- Messages -->
-        <div class="bg-gray-50 border-x border-gray-200 p-4 h-[400px] overflow-y-auto" id="messages-container">
+        <div class="bg-gray-50 border-x border-gray-200 p-2 sm:p-4 flex-1 sm:h-[400px] overflow-y-auto" id="messages-container">
             @forelse($chat->messages as $message)
                 @if($message->type === 'system')
                     <div class="flex justify-center my-3">
@@ -42,7 +42,7 @@
                     </div>
                 @elseif($message->sender_id === $user->id)
                     <div class="flex justify-end mb-3">
-                        <div class="max-w-[70%] bg-blue-600 text-white rounded-2xl rounded-tr-sm px-4 py-2">
+                        <div class="max-w-[85%] sm:max-w-[70%] bg-blue-600 text-white rounded-2xl rounded-tr-sm px-3 sm:px-4 py-2">
                             <p>{{ $message->content }}</p>
                             <span class="text-xs text-blue-200 block mt-1 text-right">
                                 {{ $message->created_at->format('H:i') }}
@@ -51,7 +51,7 @@
                     </div>
                 @else
                     <div class="flex justify-start mb-3">
-                        <div class="max-w-[70%] bg-white border border-gray-200 rounded-2xl rounded-tl-sm px-4 py-2">
+                        <div class="max-w-[85%] sm:max-w-[70%] bg-white border border-gray-200 text-gray-800 rounded-2xl rounded-tl-sm px-3 sm:px-4 py-2">
                             <p class="text-sm text-gray-600 mb-1">{{ $message->sender->name }}</p>
                             <p class="text-gray-900">{{ $message->content }}</p>
                             <span class="text-xs text-gray-400 block mt-1">
