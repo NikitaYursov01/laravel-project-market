@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use RuntimeException;
 
 class AuthController extends Controller
 {
@@ -73,8 +74,15 @@ class AuthController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // Отправляем код подтверждения
-        EmailVerificationService::sendVerificationCode($request->email);
+        try {
+            // Отправляем код подтверждения
+            EmailVerificationService::sendVerificationCode($request->email);
+        } catch (RuntimeException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
 
         return response()->json(['success' => true]);
     }
@@ -131,8 +139,15 @@ class AuthController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // Отправляем код подтверждения
-        EmailVerificationService::sendVerificationCode($request->email);
+        try {
+            // Отправляем код подтверждения
+            EmailVerificationService::sendVerificationCode($request->email);
+        } catch (RuntimeException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
 
         return response()->json(['success' => true]);
     }

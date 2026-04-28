@@ -231,9 +231,9 @@
                         const div = document.createElement('div');
                         div.className = 'relative';
                         div.innerHTML = `
-                                <img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg border">
-                                <span class="absolute top-1 right-1 bg-green-600 text-white text-xs px-2 py-1 rounded">NEW ${index + 1}</span>
-                            `;
+                                    <img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg border">
+                                    <span class="absolute top-1 right-1 bg-green-600 text-white text-xs px-2 py-1 rounded">NEW ${index + 1}</span>
+                                `;
                         preview.appendChild(div);
                     };
                     reader.readAsDataURL(file);

@@ -91,13 +91,20 @@ class OrderController extends Controller
         // Сохраняем изображения
         if ($request->hasFile('images')) {
             $orderNumber = 0;
+            $orderImagesDir = public_path('src/order-images/' . $order->id);
+            if (!is_dir($orderImagesDir)) {
+                mkdir($orderImagesDir, 0755, true);
+            }
             foreach ($request->file('images') as $image) {
                 if ($image->isValid()) {
-                    $path = $image->store('order-images/' . $order->id, 'public');
+                    $originalName = $image->getClientOriginalName();
+                    $filename = $image->hashName();
+                    $image->move($orderImagesDir, $filename);
+                    $path = 'src/order-images/' . $order->id . '/' . $filename;
                     \App\Models\OrderImage::create([
                         'order_id' => $order->id,
                         'path' => $path,
-                        'original_name' => $image->getClientOriginalName(),
+                        'original_name' => $originalName,
                         'order' => $orderNumber++,
                     ]);
                 }
@@ -114,7 +121,7 @@ class OrderController extends Controller
 
     /**
      * Показать ленту заказов с фильтрацией по роли
-     * - Исполнитель видит объявления заказчиков (type = client_request)
+     * - Исполнитель видит объявления заказчиков (type = client_order)
      * - Заказчик видит объявления исполнителей (type = performer_service)
      * - Администратор видит всё
      * - Пользователь может переключать тип через параметр ?type=
@@ -129,7 +136,7 @@ class OrderController extends Controller
         $defaultType = 'all';
         if ($user) {
             if ($user->isPerformer()) {
-                $defaultType = 'client_request'; // Исполнитель по умолчанию видит заказы
+                $defaultType = 'client_order'; // Исполнитель по умолчанию видит заказы
             } elseif ($user->isClient()) {
                 $defaultType = 'performer_service'; // Заказчик по умолчанию видит услуги
             }
@@ -226,7 +233,7 @@ class OrderController extends Controller
 
         // Проверка соответствия роли и типа объявления
         if (!$user->isManager()) {
-            if ($user->isPerformer() && $order->type !== 'client_request') {
+            if ($user->isPerformer() && $order->type !== 'client_order') {
                 return back()->with('error', 'Исполнитель может принимать только заказы заказчиков');
             }
             if ($user->isClient() && $order->type !== 'performer_service') {
@@ -274,7 +281,7 @@ class OrderController extends Controller
 
         // Проверка соответствия роли и типа объявления
         if (!$user->isManager()) {
-            if ($user->isPerformer() && $order->type !== 'client_request') {
+            if ($user->isPerformer() && $order->type !== 'client_order') {
                 return back()->with('error', 'Исполнитель может откликаться только на заказы заказчиков');
             }
             if ($user->isClient() && $order->type !== 'performer_service') {
@@ -414,13 +421,20 @@ class OrderController extends Controller
         // Добавляем новые изображения
         if ($request->hasFile('images')) {
             $orderNumber = $order->images()->count();
+            $orderImagesDir = public_path('src/order-images/' . $order->id);
+            if (!is_dir($orderImagesDir)) {
+                mkdir($orderImagesDir, 0755, true);
+            }
             foreach ($request->file('images') as $image) {
                 if ($image->isValid()) {
-                    $path = $image->store('order-images/' . $order->id, 'public');
+                    $originalName = $image->getClientOriginalName();
+                    $filename = $image->hashName();
+                    $image->move($orderImagesDir, $filename);
+                    $path = 'src/order-images/' . $order->id . '/' . $filename;
                     \App\Models\OrderImage::create([
                         'order_id' => $order->id,
                         'path' => $path,
-                        'original_name' => $image->getClientOriginalName(),
+                        'original_name' => $originalName,
                         'order' => $orderNumber++,
                     ]);
                 }
@@ -449,7 +463,17 @@ class OrderController extends Controller
 
         // Если заказ уже закрыт - удаляем полностью
         if ($order->status === 'completed' || $order->status === 'closed') {
+            // Удаляем папку с изображениями
+            $orderImagesDir = public_path('src/order-images/' . $order->id);
+            if (is_dir($orderImagesDir)) {
+                array_map('unlink', glob($orderImagesDir . '/*'));
+                rmdir($orderImagesDir);
+            }
+
+            // Удаляем записи из БД и сам заказ
+            $order->images()->delete();
             $order->delete();
+
             return redirect()
                 ->route('orders.my')
                 ->with('success', 'Заказ удален');

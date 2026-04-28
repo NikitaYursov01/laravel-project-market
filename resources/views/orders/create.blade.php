@@ -1,8 +1,8 @@
 @extends('componet.shablon')
 
 <!-- HEAD ADD CONTENT -->
-@section('title', 'Создание заказа')
-@section('description', 'C')
+@section('title', 'Разместить заказ на металлопрокат — DetailDeal')
+@section('description', 'Создайте заказ на поставку металлопроката или услуги металлообработки. Найдите поставщиков и исполнителей быстро.')
 
 <!-- BODY CONTENT -->
 @section('content')
@@ -11,7 +11,8 @@
 
     <div class="max-w-4xl mx-auto px-4 py-8">
         <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">Разместить новое объявление/услугу/заказ</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Разместить заказ на металлопрокат</h2>
+            <p class="text-gray-500 mb-6">Опишите вашу потребность в металле или услугах обработки</p>
 
             @if(session('success'))
                 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
@@ -40,7 +41,7 @@
                     </label>
                     <input type="text" id="order_name" name="order_name" required
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors @error('order_name') border-red-500 @enderror"
-                        placeholder="Введите название заказа" value="{{ old('order_name') }}">
+                        placeholder="Например: Лист стальной 3мм 1.5x3м, 10 шт." value="{{ old('order_name') }}">
                     @error('order_name')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -97,7 +98,7 @@
                     </label>
                     <textarea id="description" name="description" required rows="4"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors resize-none @error('description') border-red-500 @enderror"
-                        placeholder="Подробно опишите, что нужно сделать">{{ old('description') }}</textarea>
+                        placeholder="Подробно опишите требования: марка стали, размеры, количество, сертификация, доставка...">{{ old('description') }}</textarea>
                     @error('description')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -226,9 +227,9 @@
                         const div = document.createElement('div');
                         div.className = 'relative';
                         div.innerHTML = `
-                                <img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg border">
-                                <span class="absolute top-1 right-1 bg-blue-600 text-white text-xs px-2 py-1 rounded">${index + 1}</span>
-                            `;
+                                        <img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg border">
+                                        <span class="absolute top-1 right-1 bg-blue-600 text-white text-xs px-2 py-1 rounded">${index + 1}</span>
+                                    `;
                         preview.appendChild(div);
                     };
                     reader.readAsDataURL(file);

@@ -91,6 +91,14 @@ class ChatController extends Controller
             return back()->withErrors($validator);
         }
 
+        // Создаем сообщение
+        Message::create([
+            'chat_id' => $chat->id,
+            'sender_id' => $user->id,
+            'content' => $request->input('content'),
+            'type' => 'text',
+        ]);
+
         // Обновить время последнего сообщения
         $chat->update(['last_message_at' => now()]);
 

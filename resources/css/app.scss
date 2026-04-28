@@ -356,3 +356,21 @@ li.active {
   padding: 9px 14px 10px;
   background: #eff1f8;
 }
+
+// Desktop/Mobile responsive
+#descktop {
+  display: flex;
+}
+
+#mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  #descktop {
+    display: none;
+  }
+  #mobile {
+    display: flex;
+  }
+}

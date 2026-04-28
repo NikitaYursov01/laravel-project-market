@@ -8,6 +8,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PerformersController;
 use App\Http\Controllers\Profile;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\RoleManagementController;
 
 // главная
 Route::get('/', [HomeController::class, 'index'])->name('main');
@@ -81,6 +82,13 @@ Route::prefix('notifications')->middleware('auth')->group(function () {
     Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllRead');
     Route::delete('/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
     Route::get('/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unreadCount');
+});
+
+// Управление ролями (только для администраторов)
+Route::prefix('admin')->middleware(['auth', 'role.admin'])->group(function () {
+    Route::get('/roles', [RoleManagementController::class, 'index'])->name('admin.roles');
+    Route::post('/roles/search', [RoleManagementController::class, 'search'])->name('admin.roles.search');
+    Route::post('/users/{user}/role', [RoleManagementController::class, 'updateRole'])->name('admin.users.role.update');
 });
 
 // Условия использования и политика конфиденциальности

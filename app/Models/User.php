@@ -88,6 +88,23 @@ class User extends Authenticatable
         return $this->role === 'manager';
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Проверка доступа к управлению ролями по email
+     */
+    public function canManageRoles(): bool
+    {
+        $allowedEmails = [
+            'timqwees@gmail.com',
+        ];
+
+        return in_array($this->email, $allowedEmails);
+    }
+
     /**
      * Получить название роли для отображения
      */
@@ -96,7 +113,8 @@ class User extends Authenticatable
         return match ($this->role) {
             'client' => 'Заказчик',
             'performer' => 'Исполнитель',
-            'manager' => 'Администратор',
+            'manager' => 'Менеджер',
+            'admin' => 'Администратор',
             default => 'Пользователь',
         };
     }
@@ -109,7 +127,8 @@ class User extends Authenticatable
         return match ($this->role) {
             'client' => 'bg-blue-100 text-blue-800',
             'performer' => 'bg-green-100 text-green-800',
-            'manager' => 'bg-red-100 text-red-800',
+            'manager' => 'bg-amber-100 text-amber-800',
+            'admin' => 'bg-red-100 text-red-800',
             default => 'bg-gray-100 text-gray-800',
         };
     }
