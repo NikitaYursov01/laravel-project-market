@@ -112,6 +112,9 @@ rm -rf storage/logs/*
 rm -rf .env.backup
 rm -rf .env
 
+# Удаляем Composer
+rm -rf vendor
+
 # Очистка временных файлов
 find . -name ".*" -type f ! -name ".env*" ! -name ".env.example" -delete 2>/dev/null || true
 
