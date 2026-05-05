@@ -179,7 +179,7 @@
                 <div class="lg:col-span-4 space-y-6">
                     
                     <!-- Price & Action Card -->
-                    <div class="bg-white rounded-xl border border-gray-200 p-6 sticky top-24">
+                    <div class="bg-white rounded-xl border border-gray-200 p-6 lg:sticky lg:top-24">
                         <div class="mb-6">
                             <p class="text-sm text-gray-500 mb-1">Бюджет</p>
                             <p class="text-4xl font-bold text-gray-900">{{ Functions::formatBudget($order->budget) }}</p>
@@ -236,25 +236,68 @@
                             @if(auth()->id() === $order->user_id || auth()->user()->isManager())
                                 <div class="mt-4 pt-4 border-t border-gray-200 space-y-2">
                                     @if($order->status === 'active')
-                                        <a href="{{ route('orders.edit', $order->id) }}" 
+                                        <a href="{{ route('orders.edit', $order->id) }}"
                                             class="block w-full py-2.5 text-center border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors text-sm">
                                             Редактировать
                                         </a>
-                                        <form action="{{ route('orders.destroy', $order->id) }}" method="POST" 
+
+                                        @php
+                                            $activePerformerChat = \App\Models\Chat::where('order_id', $order->id)
+                                                ->where('status', 'active')
+                                                ->with('performer')
+                                                ->first();
+                                        @endphp
+
+                                        @if($activePerformerChat)
+                                            <!-- Информация об исполнителе -->
+                                            <div class="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                                <p class="text-xs text-gray-500 mb-1">Исполнитель:</p>
+                                                <div class="flex items-center gap-2">
+                                                    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                                                        {{ substr($activePerformerChat->performer->name ?? '??', 0, 2) }}
+                                                    </div>
+                                                    <div class="flex-1 min-w-0">
+                                                        <p class="font-medium text-sm text-gray-900 truncate">
+                                                            {{ $activePerformerChat->performer->name ?? 'Исполнитель' }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Кнопка перехода в чат с исполнителем -->
+                                            <a href="{{ route('chats.show', $activePerformerChat) }}"
+                                                class="block w-full py-2.5 text-center bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm">
+                                                <i class="fa fa-comments mr-1"></i> Чат с исполнителем
+                                            </a>
+
+                                            <!-- Кнопка отклонения исполнителя -->
+                                            <form action="{{ route('orders.cancel-performer', $order->id) }}" method="POST"
+                                                onsubmit="return confirm('Отклонить исполнителя? Заказ вернется в ленту и станет доступен для других.')">
+                                                @csrf
+                                                <button type="submit"
+                                                    class="w-full py-2.5 text-center border border-orange-200 text-orange-600 rounded-lg hover:bg-orange-50 transition-colors text-sm">
+                                                    <i class="fa fa-user-times mr-1"></i> Отклонить исполнителя
+                                                </button>
+                                            </form>
+                                        @else
+                                            <p class="text-xs text-gray-500 text-center py-2">Ожидание откликов...</p>
+                                        @endif
+
+                                        <form action="{{ route('orders.destroy', $order->id) }}" method="POST"
                                             onsubmit="return confirm('Закрыть заказ?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" 
+                                            <button type="submit"
                                                 class="w-full py-2.5 text-center border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm">
                                                 Закрыть заказ
                                             </button>
                                         </form>
                                     @else
-                                        <form action="{{ route('orders.destroy', $order->id) }}" method="POST" 
+                                        <form action="{{ route('orders.destroy', $order->id) }}" method="POST"
                                             onsubmit="return confirm('Удалить заказ?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" 
+                                            <button type="submit"
                                                 class="w-full py-2.5 text-center border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm">
                                                 Удалить
                                             </button>

@@ -26,7 +26,7 @@
                 </a>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-280px)] min-h-125">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:h-[calc(100vh-280px)]">
 
                 <!-- Chat List -->
                 <div
@@ -71,7 +71,8 @@
                                     <div class="flex-1 min-w-0">
                                         <div class="flex items-center justify-between mb-0.5">
                                             <h4 class="font-semibold text-sm text-gray-900 truncate">
-                                                {{ $otherUser?->name ?? 'Участник' }}</h4>
+                                                {{ $otherUser?->name ?? 'Участник' }}
+                                            </h4>
                                             <span
                                                 class="text-xs text-gray-400">{{ $chatItem->last_message_at?->diffForHumans() ?? '' }}</span>
                                         </div>
@@ -110,42 +111,180 @@
                     class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
                     @if($activeChat)
                         @php
-                            $otherUser = $activeChat->getOtherParticipant($user->id);
                             $order = $activeChat->order;
                         @endphp
 
+                        @php
+                            $client = $activeChat->getClient();
+                            $performer = $activeChat->getPerformer();
+                            $manager = $activeChat->manager;
+                            $activeParticipant = session('chat_' . $activeChat->id . '_participant', 'client');
+                            $orderCreator = $order->user;
+
+                            // Политика безопасности: заказчик/исполнитель общаются через менеджера
+                            $otherUser = ($user->isManager() || $user->isAdmin())
+                                ? $activeChat->getOtherParticipant($user->id)
+                                : $manager;
+                        @endphp
+
                         <!-- Chat Header -->
-                        <div class="p-4 border-b border-gray-100 flex items-center justify-between">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                                    {{ $otherUser ? substr($otherUser->name, 0, 2) : '??' }}
+                        <div class="p-4 border-b border-gray-100">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-3">
+                                    @if($user->isManager() || $user->isAdmin())
+                                        {{-- Для менеджера - показываем обоих участников --}}
+                                        <div class="flex -space-x-2 mr-2">
+                                            <div
+                                                class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm border-2 border-white">
+                                                {{ $client ? substr($client->name, 0, 2) : '??' }}
+                                            </div>
+                                            <div
+                                                class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm border-2 border-white">
+                                                {{ $performer ? substr($performer->name, 0, 2) : '??' }}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-gray-900">
+                                                Заказ #{{ $activeChat->order_id }}
+                                            </h3>
+                                            <p class="text-sm text-gray-500">
+                                                {{ $client?->name ?? 'Клиент' }} ↔ {{ $performer?->name ?? 'Исполнитель' }}
+                                            </p>
+                                        </div>
+                                    @else
+                                        {{-- Обычный пользователь --}}
+                                        <div
+                                            class="w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                            {{ $otherUser ? substr($otherUser->name, 0, 2) : '??' }}
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-gray-900">{{ $otherUser?->name ?? 'Диалог' }}</h3>
+                                            <a href="{{ route('orders.detail', $order->id) }}"
+                                                class="text-sm text-primary-600 hover:text-primary-700">
+                                                {{ Str::limit($order?->title ?? 'Заказ', 40) }}
+                                            </a>
+                                        </div>
+                                    @endif
                                 </div>
-                                <div>
-                                    <h3 class="font-semibold text-gray-900">{{ $otherUser?->name ?? 'Диалог' }}</h3>
-                                    <a href="{{ route('orders.detail', $order->id) }}"
-                                        class="text-sm text-primary-600 hover:text-primary-700">
-                                        {{ Str::limit($order?->title ?? 'Заказ', 40) }}
-                                    </a>
+                                <div class="flex items-center gap-2">
+                                    {{-- Менеджер чата --}}
+                                    @if($manager)
+                                        <span
+                                            class="px-2 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-medium flex items-center gap-1">
+                                            <i class="fa fa-user-tie"></i>
+                                            {{ $manager->name }}
+                                        </span>
+                                    @endif
+                                    <span
+                                        class="px-3 py-1 {{ $activeChat->status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' }} rounded-full text-xs font-medium">
+                                        {{ $activeChat->status === 'active' ? 'Активен' : 'Закрыт' }}
+                                    </span>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <span
-                                    class="px-3 py-1 {{ $activeChat->status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' }} rounded-full text-xs font-medium">
-                                    {{ $activeChat->status === 'active' ? 'Активен' : 'Закрыт' }}
-                                </span>
-                                @if($user->isManager() && $activeChat->status === 'active')
-                                    <form action="{{ route('chats.close', $activeChat) }}" method="POST" class="inline"
-                                        onsubmit="return confirm('Закрыть чат?')">
+
+                            {{-- Информация о заказе для менеджера --}}
+                            @if($user->isManager() || $user->isAdmin())
+                                <div class="bg-gray-50 rounded-lg p-3 mb-3">
+                                    <div class="flex items-start justify-between">
+                                        <div class="flex-1">
+                                            <a href="{{ route('orders.detail', $order->id) }}"
+                                                class="font-medium text-gray-900 hover:text-blue-600 text-sm block mb-1">
+                                                {{ $order->title }}
+                                            </a>
+                                            <div class="flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                                                <span
+                                                    class="px-2 py-0.5 bg-white rounded border">{{ \App\Services\Functions::getCategoryName($order->category) }}</span>
+                                                <span
+                                                    class="font-semibold text-gray-700">{{ \App\Services\Functions::formatBudget($order->budget) }}</span>
+                                                <span>Создатель: <span class="font-medium">{{ $orderCreator->name }}</span></span>
+                                                <span>Дедлайн: {{ $order->completion_date?->format('d.m.Y') ?? 'Не указан' }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
+                            {{-- Кнопки управления для менеджера --}}
+                            @if(($user->isManager() || $user->isAdmin()) && $activeChat->status === 'active')
+                                <div class="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100 flex-wrap">
+                                    {{-- Переключатель режима общения --}}
+                                    <span class="text-xs text-gray-500 mr-2">Режим общения:</span>
+                                    <form action="{{ route('chats.switch-participant', $activeChat) }}" method="POST"
+                                        class="inline">
                                         @csrf
+                                        <input type="hidden" name="participant" value="client">
                                         <button type="submit"
-                                            class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                            title="Закрыть чат">
-                                            <i class="fa fa-lock"></i>
+                                            class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5
+                                                                                    {{ $activeParticipant === 'client' ? 'bg-blue-100 text-blue-700 border border-blue-300' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                                            <div
+                                                class="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center text-white text-[8px] font-bold">
+                                                {{ $client ? substr($client->name, 0, 1) : 'C' }}
+                                            </div>
+                                            {{ $client?->name ?? 'Заказчик' }}
+                                            @if($activeParticipant === 'client')
+                                                <i class="fa fa-check ml-1"></i>
+                                            @endif
                                         </button>
                                     </form>
-                                @endif
-                            </div>
+                                    <form action="{{ route('chats.switch-participant', $activeChat) }}" method="POST"
+                                        class="inline">
+                                        @csrf
+                                        <input type="hidden" name="participant" value="performer">
+                                        <button type="submit"
+                                            class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5
+                                                                                    {{ $activeParticipant === 'performer' ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                                            <div
+                                                class="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center text-white text-[8px] font-bold">
+                                                {{ $performer ? substr($performer->name, 0, 1) : 'I' }}
+                                            </div>
+                                            {{ $performer?->name ?? 'Исполнитель' }}
+                                            @if($activeParticipant === 'performer')
+                                                <i class="fa fa-check ml-1"></i>
+                                            @endif
+                                        </button>
+                                    </form>
+
+                                    {{-- Разделитель --}}
+                                    <span class="w-px h-4 bg-gray-300 mx-2"></span>
+
+                                    {{-- Кнопка отклонения исполнителя (только менеджер этого чата) --}}
+                                    @if($user->isManager() && $activeChat->manager_id === $user->id)
+                                        <form action="{{ route('chats.reject-performer', $activeChat) }}" method="POST" class="inline"
+                                            onsubmit="return confirm('Отклонить исполнителя? Заказ вернется в ленту.')">
+                                            @csrf
+                                            <button type="submit"
+                                                class="px-3 py-1.5 bg-orange-100 text-orange-700 rounded-lg text-xs font-medium hover:bg-orange-200 transition-colors flex items-center gap-1">
+                                                <i class="fa fa-user-times"></i>
+                                                Отклонить исполнителя
+                                            </button>
+                                        </form>
+                                    @endif
+
+                                    {{-- Кнопка закрытия заказа --}}
+                                    <form action="{{ route('chats.close', $activeChat) }}" method="POST" class="inline"
+                                        onsubmit="return confirm('Закрыть заказ?')">
+                                        @csrf
+                                        <button type="submit"
+                                            class="px-3 py-1.5 bg-red-100 text-red-700 rounded-lg text-xs font-medium hover:bg-red-200 transition-colors flex items-center gap-1">
+                                            <i class="fa fa-lock"></i>
+                                            Закрыть заказ
+                                        </button>
+                                    </form>
+
+                                    {{-- Кнопка возобновления (только админ) --}}
+                                    @if($user->isAdmin())
+                                        <form action="{{ route('chats.reopen-order', $activeChat) }}" method="POST" class="inline"
+                                            onsubmit="return confirm('Возобновить заказ? Текущий чат будет закрыт, заказ станет доступен.')">
+                                            @csrf
+                                            <button type="submit"
+                                                class="px-3 py-1.5 bg-purple-100 text-purple-700 rounded-lg text-xs font-medium hover:bg-purple-200 transition-colors flex items-center gap-1">
+                                                <i class="fa fa-refresh"></i>
+                                                Возобновить заказ
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
+                            @endif
                         </div>
 
                         <!-- Messages -->
@@ -176,7 +315,16 @@
                                         </div>
                                         <div class="max-w-[70%]">
                                             <div class="bg-gray-100 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
-                                                <p class="text-xs text-gray-500 mb-1">{{ $message->sender->name }}</p>
+                                                <p class="text-xs text-gray-500 mb-1">
+                                                    {{ $message->sender->name }}
+                                                    @if($user->isManager() || $user->isAdmin())
+                                                        @if($message->sender_id === $activeChat->client_id)
+                                                            <span class="text-blue-600">(Клиент)</span>
+                                                        @elseif($message->sender_id === $activeChat->performer_id)
+                                                            <span class="text-green-600">(Исполнитель)</span>
+                                                        @endif
+                                                    @endif
+                                                </p>
                                                 <p class="text-sm text-gray-800">{{ $message->content }}</p>
                                             </div>
                                             <span class="text-xs text-gray-400 ml-1">{{ $message->created_at->format('H:i') }}</span>
@@ -202,6 +350,10 @@
                                 <form action="{{ route('chats.message', $activeChat) }}" method="POST"
                                     class="flex items-center gap-2">
                                     @csrf
+                                    @if($user->isManager() || $user->isAdmin())
+                                        <input type="hidden" name="participant"
+                                            value="{{ session('chat_' . $activeChat->id . '_participant', 'client') }}">
+                                    @endif
                                     <button type="button"
                                         class="p-2.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl transition-colors">
                                         <i class="fa fa-paperclip"></i>
@@ -240,7 +392,7 @@
                                             });
                                     }, 5000);
                                 @endif
-                                    });
+                                                            });
                         </script>
                     @else
                         <!-- Empty State -->

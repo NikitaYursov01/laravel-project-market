@@ -139,49 +139,88 @@ sleep 1
 
 # Настройка .env
 if [ ! -f .env ]; then
-    cp .env.example .env
-    echo "✓ .env создан из .env.example"
-    sleep 1
-    if ! grep -qE '^APP_KEY=base64:' .env; then
-        php artisan key:generate --force
-        echo "✓ APP_KEY сгенерирован"
+    if [ -f .env.example ]; then
+        cp .env.example .env
+        echo "✓ .env создан из .env.example"
     else
-        echo "✓ APP_KEY уже задан (пропускаю генерацию)"
+        echo "❌ Не найден .env и отсутствует .env.example"
+        echo "   Создайте .env вручную (сервер) или добавьте .env.example в проект"
+        exit 1
     fi
+fi
+
+echo "✓ .env уже существует"
+
+if ! grep -qE '^APP_KEY=base64:' .env; then
+    php artisan key:generate --force
+    echo "✓ APP_KEY сгенерирован"
 else
-    echo "✓ .env уже существует"
-    if ! grep -qE '^APP_KEY=base64:' .env; then
-        php artisan key:generate --force
-        echo "✓ APP_KEY сгенерирован"
-    else
-        echo "✓ APP_KEY уже задан (пропускаю генерацию)"
-    fi
+    echo "✓ APP_KEY уже задан (пропускаю генерацию)"
 fi
 
 sleep 1
 
-# Создание SQLite базы
-if [ ! -f database/database.sqlite ]; then
-    touch database/database.sqlite
-    echo "✓ SQLite база создана"
+# Создание SQLite базы (только если DB_CONNECTION=sqlite)
+DB_CONNECTION=$(grep -E '^DB_CONNECTION=' .env | tail -n 1 | cut -d '=' -f2 | tr -d '"\r')
+if [ -z "$DB_CONNECTION" ]; then
+    DB_CONNECTION="sqlite"
+fi
+
+if [ "$DB_CONNECTION" = "sqlite" ]; then
+    if [ ! -f database/database.sqlite ]; then
+        touch database/database.sqlite
+        echo "✓ SQLite база создана"
+    else
+        echo "✓ SQLite база уже существует"
+    fi
 else
-    echo "✓ SQLite база уже существует"
+    echo "✓ DB_CONNECTION=$DB_CONNECTION (SQLite не создаю)"
 fi
 
 sleep 1
 
 # Миграции и сиды
-echo "🗄️ Выполнение миграций и сидеров..."
-php artisan migrate:fresh --force --seed
+# ВНИМАНИЕ: migrate:fresh удаляет данные. Для сервера по умолчанию используем migrate.
+echo "🗄️ Выполнение миграций..."
+
+if [[ "$1" == "--fresh" ]]; then
+    echo "⚠️ Включен режим --fresh: база будет пересоздана"
+    php artisan migrate:fresh --force --seed
+else
+    php artisan migrate --force
+    # Сиды запускаем только если явно попросили
+    if [[ "$1" == "--seed" ]]; then
+        php artisan db:seed --force
+    fi
+fi
 
 sleep 1
 
-# Очистка кэша
+# Очистка кэша перед кешированием
 echo "🧹 Очистка кэша..."
+# Создаем директорию для compiled views, если её нет
+mkdir -p storage/framework/views
 php artisan cache:clear
-php artisan config:clear
 php artisan view:clear
 php artisan route:clear
+php artisan config:clear
+
+sleep 1
+
+# Права на папки (storage и bootstrap/cache)
+echo "🔐 Настройка прав на папки..."
+chmod -R 775 storage/
+chmod -R 775 bootstrap/cache/
+echo "✓ Права на storage/ и bootstrap/cache/ установлены (775)"
+
+sleep 1
+
+# Кеширование для production
+echo "⚡ Кеширование для production..."
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+echo "✓ Конфигурация, маршруты и views закешированы"
 
 sleep 1
 

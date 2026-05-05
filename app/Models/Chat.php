@@ -50,6 +50,10 @@ class Chat extends Model
     {
         return $this->messages()
             ->where('sender_id', '!=', $userId)
+            ->where(function ($q) use ($userId) {
+                $q->whereNull('recipient_id')
+                    ->orWhere('recipient_id', $userId);
+            })
             ->whereNull('read_at')
             ->count();
     }
@@ -58,8 +62,8 @@ class Chat extends Model
     {
         return $query->where(function ($q) use ($userId) {
             $q->where('client_id', $userId)
-              ->orWhere('performer_id', $userId)
-              ->orWhere('manager_id', $userId);
+                ->orWhere('performer_id', $userId)
+                ->orWhere('manager_id', $userId);
         });
     }
 
@@ -71,5 +75,44 @@ class Chat extends Model
             return $this->client;
         }
         return null;
+    }
+
+    /**
+     * Получить заказчика чата
+     */
+    public function getClient(): ?User
+    {
+        return $this->client;
+    }
+
+    /**
+     * Получить исполнителя чата
+     */
+    public function getPerformer(): ?User
+    {
+        return $this->performer;
+    }
+
+    /**
+     * Проверка является ли пользователь менеджером этого чата
+     */
+    public function isManager(int $userId): bool
+    {
+        return $this->manager_id === $userId;
+    }
+
+    /**
+     * Получить активного собеседника для отображения (для менеджера)
+     * Использует сессию для хранения выбора
+     */
+    public function getActiveParticipantForManager(?string $sessionKey = null): ?User
+    {
+        if (!$sessionKey) {
+            return $this->client;
+        }
+
+        $activeParticipant = session($sessionKey, 'client');
+
+        return $activeParticipant === 'performer' ? $this->performer : $this->client;
     }
 }

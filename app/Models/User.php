@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Chat;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -131,5 +132,68 @@ class User extends Authenticatable
             'admin' => 'bg-red-100 text-red-800',
             default => 'bg-gray-100 text-gray-800',
         };
+    }
+
+    /**
+     * Получить активные чаты менеджера (только для менеджеров)
+     */
+    public function managedChats()
+    {
+        return $this->hasMany(Chat::class, 'manager_id')->where('status', 'active');
+    }
+
+    /**
+     * Количество активных заказов у менеджера
+     */
+    public function activeManagedChatsCount(): int
+    {
+        if (!$this->isManager() && !$this->isAdmin()) {
+            return 0;
+        }
+        return $this->managedChats()->count();
+    }
+
+    /**
+     * Проверка: может ли менеджер взять еще заказ (лимит 2)
+     */
+    public function canTakeMoreOrders(): bool
+    {
+        if (!$this->isManager() && !$this->isAdmin()) {
+            return false;
+        }
+        return $this->activeManagedChatsCount() < 2;
+    }
+
+    /**
+     * Найти свободного менеджера для автоназначения
+     * Приоритет: меньше всего активных заказов
+     */
+    public static function findAvailableManager(): ?self
+    {
+        return self::whereIn('role', ['manager', 'admin'])
+            ->withCount([
+                'managedChats as active_managed_chats_count' => function ($q) {
+                    $q->where('status', 'active');
+                }
+            ])
+            ->having('active_managed_chats_count', '<', 2)
+            ->orderBy('active_managed_chats_count')
+            ->orderBy('id')
+            ->first();
+    }
+
+    /**
+     * Получить загрузку менеджера для отображения
+     */
+    public function getWorkload(): array
+    {
+        $active = $this->activeManagedChatsCount();
+        return [
+            'active' => $active,
+            'limit' => 2,
+            'available' => 2 - $active,
+            'is_full' => $active >= 2,
+            'percentage' => ($active / 2) * 100,
+        ];
     }
 }

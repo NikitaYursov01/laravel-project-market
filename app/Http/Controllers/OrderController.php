@@ -241,7 +241,16 @@ class OrderController extends Controller
             }
         }
 
-        // Проверка существующего чата
+        // Проверка что заказ уже взят другим исполнителем
+        $activeChat = Chat::where('order_id', $order->id)
+            ->where('status', 'active')
+            ->first();
+
+        if ($activeChat && $activeChat->performer_id !== $user->id) {
+            return back()->with('error', 'Этот заказ уже взят другим исполнителем');
+        }
+
+        // Проверка существующего чата текущего пользователя
         $existingChat = Chat::where('order_id', $order->id)
             ->where(function ($q) use ($user) {
                 $q->where('performer_id', $user->id)
@@ -290,7 +299,16 @@ class OrderController extends Controller
         }
         // Администратор может откликаться на любые типы
 
-        // Проверка существующего чата
+        // Проверка что заказ уже взят другим исполнителем
+        $activeChat = Chat::where('order_id', $order->id)
+            ->where('status', 'active')
+            ->first();
+
+        if ($activeChat && $activeChat->performer_id !== $user->id) {
+            return back()->with('error', 'Этот заказ уже взят другим исполнителем');
+        }
+
+        // Проверка существующего чата текущего пользователя
         $existingChat = Chat::where('order_id', $order->id)
             ->where(function ($q) use ($user) {
                 $q->where('performer_id', $user->id)
@@ -325,9 +343,13 @@ class OrderController extends Controller
             }
         }
 
+        // В системе с посредником отклик видит менеджер (или заказчик если менеджер не назначен)
+        $recipientId = $chat->manager_id ?? $order->user_id;
+
         \App\Models\Message::create([
             'chat_id' => $chat->id,
             'sender_id' => $user->id,
+            'recipient_id' => $recipientId,
             'content' => $responseText,
             'type' => 'text',
         ]);
@@ -402,10 +424,7 @@ class OrderController extends Controller
                 ->withInput();
         }
 
-        // Определяем тип объявления на основе роли
-        $orderType = $user->isPerformer() ? 'performer_service' : 'client_request';
-
-        // Обновляем заказ
+        // Обновляем заказ (тип не меняем при редактировании)
         $order->update([
             'title' => $request->order_name,
             'category' => $request->category,
@@ -415,7 +434,6 @@ class OrderController extends Controller
             'location' => $request->location,
             'completion_date' => $request->completion_date,
             'technical_requirements' => $request->technical_requirements,
-            'type' => $orderType,
         ]);
 
         // Добавляем новые изображения
@@ -488,5 +506,73 @@ class OrderController extends Controller
         return redirect()
             ->route('orders.my')
             ->with('success', 'Заказ закрыт. Вы можете удалить его полностью позже.');
+    }
+
+    /**
+     * Отклонить исполнителя и вернуть заказ в активное состояние
+     * Доступно только автору заказа
+     */
+    public function cancelPerformer(Order $order, Request $request)
+    {
+        $user = auth()->user();
+
+        // Только автор заказа может отклонить исполнителя
+        if ($order->user_id !== $user->id && !$user->isManager()) {
+            abort(403, 'Только автор заказа может отклонить исполнителя');
+        }
+
+        // Проверяем что заказ в нужном состоянии
+        if ($order->status !== 'active') {
+            return back()->with('error', 'Заказ не активен');
+        }
+
+        // Находим активный чат
+        $chat = Chat::where('order_id', $order->id)
+            ->where('status', 'active')
+            ->first();
+
+        if (!$chat) {
+            return back()->with('error', 'Нет активного исполнителя для отклонения');
+        }
+
+        $performer = $chat->performer;
+
+        // Закрываем чат
+        $chat->update(['status' => 'closed']);
+
+        // Добавляем системное сообщение
+        \App\Models\Message::create([
+            'chat_id' => $chat->id,
+            'sender_id' => $user->id,
+            'content' => "Заказчик отклонил исполнителя. Заказ возвращен в ленту.",
+            'type' => 'system',
+        ]);
+
+        // Уведомляем исполнителя
+        \App\Models\Notification::create([
+            'user_id' => $chat->performer_id,
+            'type' => 'performer_rejected',
+            'title' => 'Заказчик отклонил вашу кандидатуру',
+            'message' => "По заказу \"{$order->title}\" заказчик выбрал другого исполнителя",
+            'link' => route('orders.feed'),
+            'is_important' => true,
+        ]);
+
+        // Уведомляем заказчика
+        \App\Models\Notification::create([
+            'user_id' => $order->user_id,
+            'type' => 'order_reopened',
+            'title' => 'Заказ возвращен в ленту',
+            'message' => "Вы отклонили исполнителя. Заказ \"{$order->title}\" снова доступен для откликов.",
+            'link' => route('orders.detail', $order->id),
+            'is_important' => false,
+        ]);
+
+        // Очищаем кэш
+        Functions::clearOrdersCache();
+
+        return redirect()
+            ->route('orders.my')
+            ->with('success', 'Исполнитель отклонен. Заказ возвращен в ленту и доступен для новых откликов.');
     }
 }

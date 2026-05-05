@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class RoleAdminMiddleware
 {
     /**
-     * Список email, имеющих доступ к управлению ролями
+     * Список email, имеющих полный доступ (админы)
      */
     protected array $allowedEmails = [
         'timqwees@gmail.com',
@@ -18,11 +18,15 @@ class RoleAdminMiddleware
     {
         $user = auth()->user();
 
-        // Проверяем, есть ли у пользователя доступ
-        if (!$user || !in_array($user->email, $this->allowedEmails)) {
+        if (!$user) {
             abort(403, 'Доступ запрещен');
         }
 
-        return $next($request);
+        // Доступ имеют: менеджеры, админы, или разрешенные email
+        if ($user->isManager() || $user->isAdmin() || in_array($user->email, $this->allowedEmails)) {
+            return $next($request);
+        }
+
+        abort(403, 'Доступ запрещен');
     }
 }
