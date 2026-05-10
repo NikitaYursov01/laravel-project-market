@@ -144,12 +144,18 @@
                         @php
                             $responses = \App\Models\Chat::where('order_id', $order->id)->count();
                             $isService = $order->type === 'performer_service';
+                            $hasActivePerformer = \App\Models\Chat::where('order_id', $order->id)->where('status', 'active')->exists();
+                            $userChat = auth()->check() ? \App\Models\Chat::where('order_id', $order->id)
+                                ->where(function($q) {
+                                    $q->where('performer_id', auth()->id())
+                                      ->orWhere('client_id', auth()->id());
+                                })->first() : null;
                         @endphp
-                        <a href="{{ route('orders.detail', $order->id) }}" class="group flex gap-5 p-5 bg-white border border-gray-200 hover:border-gray-400 transition-all hover:shadow-lg rounded-xl">
+                        <a href="{{ route('orders.detail', $order->id) }}" class="group flex flex-col sm:flex-row gap-5 p-5 bg-white border border-gray-200 hover:border-gray-400 transition-all hover:shadow-lg rounded-xl {{ $hasActivePerformer && !$userChat ? 'opacity-75' : '' }}">
                             <!-- Image -->
-                            <div class="w-40 h-40 shrink-0 bg-gray-100 relative overflow-hidden rounded-lg">
+                            <div class="w-full sm:w-40 h-40 shrink-0 bg-gray-100 relative overflow-hidden rounded-lg">
                                 @if($order->images && $order->images->count() > 0)
-                                    <img src="{{ $order->images->first()->getUrl() }}" alt="" 
+                                    <img src="{{ $order->images->first()->getUrl() }}" alt=""
                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                         loading="lazy" decoding="async" width="160" height="160">
                                 @else
@@ -157,27 +163,45 @@
                                         <i class="fa {{ $isService ? 'fa-fire' : 'fa-cube' }} text-4xl text-gray-300"></i>
                                     </div>
                                 @endif
-                                <div class="absolute bottom-0 left-0 right-0 py-1.5 {{ $isService ? 'bg-orange-500' : 'bg-blue-600' }} text-white text-center text-xs font-medium">
-                                    {{ $isService ? 'Услуга' : 'Металл' }}
-                                </div>
+                                @if($hasActivePerformer && !$userChat)
+                                    <div class="absolute top-0 left-0 right-0 py-1.5 bg-red-500 text-white text-center text-xs font-medium">
+                                        Уже взят
+                                    </div>
+                                @else
+                                    <div class="absolute bottom-0 left-0 right-0 py-1.5 {{ $isService ? 'bg-orange-500' : 'bg-blue-600' }} text-white text-center text-xs font-medium">
+                                        {{ $isService ? 'Услуга' : 'Металл' }}
+                                    </div>
+                                @endif
                             </div>
-                            
+
                             <!-- Content -->
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-start justify-between gap-4 mb-2">
-                                    <div class="flex items-center gap-2">
+                                    <div class="flex items-center gap-2 flex-wrap">
                                         <span class="text-xs text-gray-500 uppercase tracking-wide">{{ Functions::getCategoryName($order->category) }}</span>
                                         <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
-                                        <span class="text-xs {{ $order->status === 'active' ? 'text-green-600' : 'text-gray-400' }} font-medium">
-                                            {{ $order->status === 'active' ? 'Ищет исполнителя' : 'Завершено' }}
-                                        </span>
+                                        @if($hasActivePerformer)
+                                            @if($userChat)
+                                                <span class="text-xs text-green-600 font-medium bg-green-50 px-2 py-0.5 rounded">
+                                                    <i class="fa fa-check mr-1"></i>Вы откликнулись
+                                                </span>
+                                            @else
+                                                <span class="text-xs text-red-600 font-medium bg-red-50 px-2 py-0.5 rounded">
+                                                    <i class="fa fa-lock mr-1"></i>Уже взят
+                                                </span>
+                                            @endif
+                                        @else
+                                            <span class="text-xs {{ $order->status === 'active' ? 'text-green-600' : 'text-gray-400' }} font-medium">
+                                                {{ $order->status === 'active' ? 'Ищет исполнителя' : 'Завершено' }}
+                                            </span>
+                                        @endif
                                     </div>
                                     <span class="text-xl font-bold text-gray-900 whitespace-nowrap">{{ Functions::formatBudget($order->budget) }}</span>
                                 </div>
-                                
+
                                 <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-700 transition-colors">{{ $order->title }}</h3>
                                 <p class="text-gray-600 mb-3 line-clamp-2">{{ Str::limit($order->description, 120) }}</p>
-                                
+
                                 <!-- Meta -->
                                 <div class="flex items-center gap-4 text-sm text-gray-400">
                                     <span class="flex items-center gap-1"><i class="fa fa-user-o"></i> {{ Str::limit($order->user->name, 20) }}</span>

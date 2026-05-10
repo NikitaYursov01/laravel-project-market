@@ -3,8 +3,7 @@
     "private": true,
     "scripts": {
         "new": "bash new.sh",
-        "start": "clear && echo '🚀 Запуск DetailDetail...' && echo '' && php artisan serve --host=127.0.0.1",
-        "prepare": "bash prepare.sh",
+"start": "clear && echo '🚀 Запуск DetailDetail...' && php artisan serve --host=127.0.0.1 --port=8080",        "prepare": "bash prepare.sh",
         "zip": "zip -r Архив.zip . -x 'Архив.zip' && echo '✅ готов'"
     },
     "devDependencies": {},

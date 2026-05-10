@@ -21,6 +21,6 @@ class OrderImage extends Model
 
     public function getUrl(): string
     {
-        return asset('public/' . $this->path);
+        return asset($this->path);
     }
 }

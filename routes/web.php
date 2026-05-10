@@ -9,6 +9,7 @@ use App\Http\Controllers\PerformersController;
 use App\Http\Controllers\Profile;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RoleManagementController;
+use App\Http\Controllers\AdminChatController;
 
 // главная
 Route::get('/', [HomeController::class, 'index'])->name('main');
@@ -73,6 +74,9 @@ Route::prefix('orders')->group(function () {
 
     // удаление (закрытие) заказа (только автору или админу)
     Route::delete('/{order}/delete', [OrderController::class, 'destroy'])->name('orders.destroy')->middleware('auth');
+
+    // отклонить исполнителя и вернуть заказ в ленту (только автору или админу)
+    Route::post('/{order}/cancel-performer', [OrderController::class, 'cancelPerformer'])->name('orders.cancel-performer')->middleware('auth');
 });
 
 // Исполнители
@@ -89,11 +93,16 @@ Route::prefix('notifications')->middleware('auth')->group(function () {
     Route::get('/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unreadCount');
 });
 
-// Управление ролями (только для администраторов)
+// Управление ролями и чатами (только для администраторов и менеджеров)
 Route::prefix('admin')->middleware(['auth', 'role.admin'])->group(function () {
     Route::get('/roles', [RoleManagementController::class, 'index'])->name('admin.roles');
     Route::post('/roles/search', [RoleManagementController::class, 'search'])->name('admin.roles.search');
     Route::post('/users/{user}/role', [RoleManagementController::class, 'updateRole'])->name('admin.users.role.update');
+
+    // Управление чатами
+    Route::get('/chats', [AdminChatController::class, 'index'])->name('admin.chats');
+    Route::post('/chats/{chat}/assign', [AdminChatController::class, 'assignToMe'])->name('admin.chats.assign');
+    Route::delete('/chats/{chat}/unassign', [AdminChatController::class, 'unassign'])->name('admin.chats.unassign');
 });
 
 // Условия использования и политика конфиденциальности
@@ -117,4 +126,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/chats/{chat}/poll', [ChatController::class, 'poll'])->name('chats.poll');
     Route::post('/chats/{chat}/close', [ChatController::class, 'close'])->name('chats.close');
     Route::post('/chats/{chat}/assign-manager', [ChatController::class, 'assignManager'])->name('chats.assign-manager');
+    Route::post('/chats/{chat}/switch-participant', [ChatController::class, 'switchParticipant'])->name('chats.switch-participant');
+    Route::post('/chats/{chat}/reject-performer', [ChatController::class, 'rejectPerformer'])->name('chats.reject-performer');
+    Route::post('/chats/{chat}/reopen-order', [ChatController::class, 'reopenOrder'])->name('chats.reopen-order');
 });

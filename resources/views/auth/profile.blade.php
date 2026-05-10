@@ -88,6 +88,18 @@
                                     </a>
                                 @endif
 
+                                {{-- Управление чатами (для менеджеров и админов) --}}
+                                @if(Auth::user()->isManager() || Auth::user()->isAdmin())
+                                    <div class="border-t border-gray-100 my-2"></div>
+                                    <button data-toggle-section="admin-chats"
+                                        class="profile-nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-medium text-amber-600 hover:bg-amber-50 transition-all">
+                                        <i class="fa fa-comments w-5"></i>
+                                        Управление чатами
+                                        <span
+                                            class="ml-auto px-2 py-0.5 bg-amber-100 text-amber-600 rounded-md text-xs">{{ \App\Models\Chat::whereNull('manager_id')->where('status', 'active')->count() }}</span>
+                                    </button>
+                                @endif
+
                                 <div class="border-t border-gray-100 my-2"></div>
                                 <button onclick="document.getElementById('logout-form').submit()"
                                     class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-medium text-red-600 hover:bg-red-50 transition-all">
@@ -291,6 +303,11 @@
                                 </div>
                             </div>
                         </div>
+
+                        {{-- Управление чатами (для менеджеров и админов) --}}
+                        @if(Auth::user()->isManager() || Auth::user()->isAdmin())
+                            @include('auth.admin-chats')
+                        @endif
 
                     </div>
                 </div>
