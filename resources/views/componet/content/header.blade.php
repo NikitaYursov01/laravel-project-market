@@ -34,6 +34,9 @@
                 <a href="{{ route('orders.feed', ['type' => 'performer_service']) }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-xl hover:bg-gray-100 transition-colors {{ request()->routeIs('orders.feed') && request('type') === 'performer_service' ? 'text-blue-700 bg-blue-50' : '' }}">
                     Исполнители
                 </a>
+                <a href="{{ route('help') }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-xl hover:bg-gray-100 transition-colors {{ request()->routeIs('help') ? 'text-blue-700 bg-blue-50' : '' }}">
+                    Помощь
+                </a>
             </nav>
             
             <!-- Right Side -->
@@ -141,6 +144,10 @@
                                     <i class="fa fa-plus-circle text-blue-600 w-5"></i>
                                     Создать заказ
                                 </a>
+                                <a href="{{ route('help') }}" class="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors">
+                                    <i class="fa fa-question-circle text-gray-400 w-5"></i>
+                                    Помощь
+                                </a>
                             </div>
                             
                             <!-- Settings & Logout -->
@@ -205,6 +212,10 @@
             <a href="{{ route('orders.feed', ['type' => 'performer_service']) }}" class="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
                 <i class="fa fa-users w-5 text-center"></i>
                 Исполнители
+            </a>
+            <a href="{{ route('help') }}" class="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors {{ request()->routeIs('help') ? 'bg-blue-50 text-blue-700 font-medium' : '' }}">
+                <i class="fa fa-question-circle w-5 text-center"></i>
+                Помощь
             </a>
             @auth
                 <div class="border-t border-gray-200 pt-3 mt-3 space-y-1">

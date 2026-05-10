@@ -13,6 +13,11 @@ use App\Http\Controllers\RoleManagementController;
 // главная
 Route::get('/', [HomeController::class, 'index'])->name('main');
 
+// страница помощи (FAQ)
+Route::get('/help', function () {
+    return view('help');
+})->name('help');
+
 // маршруты авторизации (prefix - это заранее написанный первый путь /auth/... а дальше группа запросов)
 Route::prefix('auth')->group(function () {
 
